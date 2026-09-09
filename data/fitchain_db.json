@@ -3,6 +3,10 @@
     "samdi": {
       "passwordHash": "d2fe8a3727b921bcd702c42ffec15a6ff4c3aeb749c2c8733847e55632a9c4a9",
       "createdAt": "2026-09-09T20:05:00.674Z"
+    },
+    "gulbilge": {
+      "passwordHash": "1da3048d9375a8c8c58d78da7d13d488ffa56bf89065164ce9fcbee05507fe2e",
+      "createdAt": "2026-09-09T20:07:56.815Z"
     }
   },
   "userData": {
@@ -35,6 +39,12 @@
           "notes": "2 Simit üçgen peynir ve sarelle + cheesecake ve icetea yaklaşık 20g protein\n"
         }
       }
+    },
+    "gulbilge": {
+      "settings": {
+        "startWeight": null
+      },
+      "logs": {}
     }
   }
 }
