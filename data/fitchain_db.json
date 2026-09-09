@@ -73,9 +73,20 @@
     },
     "samet": {
       "settings": {
-        "startWeight": null
+        "startWeight": 72
       },
-      "logs": {}
+      "logs": {
+        "2026-09-09": {
+          "metrics": {
+            "weight": 72,
+            "bodyFat": null,
+            "muscleMass": null,
+            "waterPct": null,
+            "visceralFat": null
+          },
+          "habits": {}
+        }
+      }
     }
   }
 }
