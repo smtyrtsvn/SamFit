@@ -68,7 +68,8 @@
         "2026-09-09": {
           "weight": 72,
           "workout": true,
-          "diet": false
+          "diet": false,
+          "water": 1
         }
       }
     }
