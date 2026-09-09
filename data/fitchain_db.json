@@ -1,0 +1,19 @@
+{
+  "accounts": {
+    "samet": {
+      "passwordHash": "d2fe8a3727b921bcd702c42ffec15a6ff4c3aeb749c2c8733847e55632a9c4a9",
+      "createdAt": "2026-09-09T20:15:38.289Z"
+    }
+  },
+  "userData": {
+    "samet": {
+      "settings": {
+        "startWeight": null,
+        "partner": null,
+        "duoCode": "DUO-SAM-4726",
+        "theme": "pink"
+      },
+      "logs": {}
+    }
+  }
+}
