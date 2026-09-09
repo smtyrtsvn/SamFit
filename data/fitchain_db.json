@@ -13,7 +13,9 @@
       "logs": {
         "2026-09-09": {
           "habits": {
-            "waterGlasses": 1
+            "waterGlasses": 1,
+            "workoutCompleted": false,
+            "dietCompleted": true
           },
           "metrics": {}
         }
