@@ -7,6 +7,10 @@
     "samdi": {
       "passwordHash": "ed0e492d100f92d4457a8184e3758ae2dc567bac0fac34a50591b425630e9063",
       "createdAt": "2026-09-09T20:16:59.985Z"
+    },
+    "samedi": {
+      "passwordHash": "948373bb311f5b2c5466ea17300a8e4ee28734bab4639bf6a731dc8720417320",
+      "createdAt": "2026-09-09T20:22:02.210Z"
     }
   },
   "userData": {
@@ -25,6 +29,15 @@
         "partner": null,
         "duoCode": "DUO-SAM-6572",
         "theme": "pink"
+      },
+      "logs": {}
+    },
+    "samedi": {
+      "settings": {
+        "startWeight": null,
+        "partner": null,
+        "duoCode": "DUO-SAM-2309",
+        "theme": "blue"
       },
       "logs": {}
     }
