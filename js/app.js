@@ -8,7 +8,9 @@ import {
   setGithubConfig,
   fetchRemoteDatabase,
   saveUserDailyLog,
-  registerNewUser
+  registerNewUser,
+  pairUsersByCode,
+  unpairUsers
 } from "./api.js";
 import {
   hashPassword,
@@ -31,18 +33,12 @@ import {
   updateMilestoneProjections
 } from "./chart.js";
 
-// ============================================================================
-// UYGULAMA DURUMU (APPLICATION STATE)
-// ============================================================================
 let currentDb = null;
 let activeUser = null;
 let currentDate = new Date().toISOString().split("T")[0];
 let currentTab = "today";
 let authMode = "login";
 
-// ============================================================================
-// YARDIMCI VE BİLDİRİM FONKSİYONLARI
-// ============================================================================
 function showSync(text = "GitHub ile senkronize ediliyor...") {
   const el = document.getElementById("syncIndicator");
   const txt = document.getElementById("syncText");
@@ -65,9 +61,6 @@ function getActiveUserSettings() {
   return currentDb.userData[activeUser]?.settings || {};
 }
 
-// ============================================================================
-// SEKME YÖNETİMİ (TAB ROUTER)
-// ============================================================================
 function switchTab(targetTab) {
   currentTab = targetTab;
   const tabs = ["today", "workout", "diet", "duo", "progress"];
@@ -88,37 +81,26 @@ function switchTab(targetTab) {
     }
   });
 
-  // Sekmeye özel dinamik içerik güncellemeleri
-  if (targetTab === "workout") {
-    refreshWorkoutTab();
-  } else if (targetTab === "duo") {
-    refreshDuoTab();
-  } else if (targetTab === "progress") {
-    refreshProgressTab();
-  }
+  if (targetTab === "workout") refreshWorkoutTab();
+  else if (targetTab === "duo") refreshDuoTab();
+  else if (targetTab === "progress") refreshProgressTab();
 }
 
-// ============================================================================
-// GÜNLÜK VERİ & XIAOMI TARTI YÜKLEME / KAYDETME
-// ============================================================================
 function loadDayData(dateStr) {
   const logs = getActiveUserLogs();
   const log = logs[dateStr] || {};
   const metrics = log.metrics || {};
   const habits = log.habits || {};
 
-  // Xiaomi Metrik Girişleri
   document.getElementById("metricWeight").value = metrics.weight || "";
   document.getElementById("metricBodyFat").value = metrics.bodyFat || "";
   document.getElementById("metricMuscleMass").value = metrics.muscleMass || "";
   document.getElementById("metricWaterPct").value = metrics.waterPct || "";
   document.getElementById("metricVisceralFat").value = metrics.visceralFat || "";
 
-  // Alışkanlık Onayları
   document.getElementById("checkWorkout").checked = !!habits.workoutCompleted;
   document.getElementById("checkDiet").checked = !!habits.dietCompleted;
 
-  // Su ve Notlar
   document.getElementById("waterGlassCount").innerText = habits.waterGlasses || 0;
   document.getElementById("dietNotes").value = log.notes || "";
 
@@ -228,9 +210,6 @@ async function handleSaveDietNotes() {
   }
 }
 
-// ============================================================================
-// KALİSTENİK ANTRENMAN MOTORU ETKİLEŞİMLERİ
-// ============================================================================
 function refreshWorkoutTab() {
   const select = document.getElementById("routineSelect");
   const container = document.getElementById("routineCardsContainer");
@@ -268,9 +247,6 @@ async function handleSaveWorkout() {
   }
 }
 
-// ============================================================================
-// GÖRSEL BİLEŞENLERİ YENİLEME
-// ============================================================================
 function updateAllViews() {
   const logs = getActiveUserLogs();
   const streak = calculateUserStreak(logs);
@@ -315,12 +291,66 @@ function renderMiniChain() {
 
 function refreshDuoTab() {
   const container = document.getElementById("duoDashboardContainer");
-  renderDuoDashboard(container, currentDb, "samet", "gulbilge", activeUser);
+  renderDuoDashboard(container, currentDb, activeUser);
+
+  // Duo Ekranı Olay Dinleyicileri (Dinamik Render Sonrası Bağlanır)
+  const copyBtn = document.getElementById("btnCopyDuoCode");
+  if (copyBtn) {
+    copyBtn.onclick = () => {
+      const code = document.getElementById("displayDuoCode")?.innerText.trim();
+      if (code) {
+        navigator.clipboard.writeText(code);
+        copyBtn.innerText = "Kopyalandı! ✓";
+        setTimeout(() => (copyBtn.innerText = "Kopyala 📋"), 2000);
+      }
+    };
+  }
+
+  const pairForm = document.getElementById("pairDuoForm");
+  if (pairForm) {
+    pairForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const targetCode = document.getElementById("inputPartnerCode").value;
+      if (!targetCode) return;
+
+      showSync("Partner kodu doğrulanıyor...");
+      try {
+        const res = await pairUsersByCode(activeUser, targetCode);
+        currentDb = res.db;
+        hideSync();
+        alert("Harika! Partnerinizle başarıyla eşleştiniz.");
+        refreshDuoTab();
+      } catch (err) {
+        hideSync();
+        alert("Eşleşme Hatası: " + err.message);
+      }
+    };
+  }
+
+  const unpairBtn = document.getElementById("btnUnpairDuo");
+  if (unpairBtn) {
+    unpairBtn.onclick = async () => {
+      if (!confirm("Duo eşleşmesini sonlandırmak istediğinize emin misiniz?")) return;
+
+      showSync("Eşleşme kaldırılıyor...");
+      try {
+        const res = await unpairUsers(activeUser);
+        currentDb = res.db;
+        hideSync();
+        alert("Eşleşme başarıyla kaldırıldı.");
+        refreshDuoTab();
+      } catch (err) {
+        hideSync();
+        alert("Hata: " + err.message);
+      }
+    };
+  }
 }
 
 function refreshProgressTab() {
   const canvas = document.getElementById("weightChart");
-  renderTrendChart(canvas, getActiveUserLogs(), activeUser);
+  const themeId = currentDb?.userData?.[activeUser]?.settings?.theme || "blue";
+  renderTrendChart(canvas, getActiveUserLogs(), themeId);
 
   const containerCards = {
     month1: document.getElementById("cardMonth1"),
@@ -330,9 +360,6 @@ function refreshProgressTab() {
   updateMilestoneProjections(containerCards, getActiveUserLogs(), getActiveUserSettings());
 }
 
-// ============================================================================
-// AUTH & OTURUM YÖNETİMİ
-// ============================================================================
 function toggleAuthMode(mode) {
   authMode = mode;
   const loginBtn = document.getElementById("authTabLogin");
@@ -372,7 +399,9 @@ async function handleAuthSubmit(e) {
     showSync("Yeni profil oluşturuluyor...");
     try {
       const hash = await hashPassword(password);
-      const res = await registerNewUser(username, hash);
+      // İlk açılan hesaba mavi, ikinciye pembe varsayılan ver
+      const chosenTheme = Object.keys(currentDb?.accounts || {}).length % 2 === 0 ? "blue" : "pink";
+      const res = await registerNewUser(username, hash, chosenTheme);
       currentDb = res.db;
       hideSync();
       login(username);
@@ -404,7 +433,8 @@ function login(username) {
   const userLabel = document.getElementById("activeUserLabel");
   if (userLabel) userLabel.innerText = `Profil: ${username.toUpperCase()}`;
 
-  applyUserTheme(username);
+  const themeId = currentDb?.userData?.[username]?.settings?.theme || "blue";
+  applyUserTheme(themeId);
   updateAllViews();
   switchTab("today");
 }
@@ -417,9 +447,6 @@ function logout() {
   document.getElementById("authPassword").value = "";
 }
 
-// ============================================================================
-// GITHUB YAPILANDIRMA MODAL İŞLEMLERİ
-// ============================================================================
 function openGithubSettings() {
   const cfg = getGithubConfig();
   if (cfg) {
@@ -461,11 +488,7 @@ function checkExistingSession() {
   }
 }
 
-// ============================================================================
-// OLAY DİNLEYİCİLERİ VE BAŞLATMA (INIT)
-// ============================================================================
 window.addEventListener("DOMContentLoaded", async () => {
-  // Tarih alanını bugüne ayarla
   const dateInput = document.getElementById("selectedDate");
   if (dateInput) {
     dateInput.value = currentDate;
@@ -476,38 +499,31 @@ window.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Sekme Butonları
   document.getElementById("tab-btn-today")?.addEventListener("click", () => switchTab("today"));
   document.getElementById("tab-btn-workout")?.addEventListener("click", () => switchTab("workout"));
   document.getElementById("tab-btn-diet")?.addEventListener("click", () => switchTab("diet"));
   document.getElementById("tab-btn-duo")?.addEventListener("click", () => switchTab("duo"));
   document.getElementById("tab-btn-progress")?.addEventListener("click", () => switchTab("progress"));
 
-  // Auth Modal Olayları
   document.getElementById("authTabLogin")?.addEventListener("click", () => toggleAuthMode("login"));
   document.getElementById("authTabRegister")?.addEventListener("click", () => toggleAuthMode("register"));
   document.getElementById("authForm")?.addEventListener("submit", handleAuthSubmit);
   document.getElementById("btnLogout")?.addEventListener("click", logout);
 
-  // GitHub Config Modal Olayları
   document.getElementById("githubConfigForm")?.addEventListener("submit", handleGithubConfigSubmit);
   document.getElementById("btnOpenSettings")?.addEventListener("click", openGithubSettings);
 
-  // Bugün Sekmesi Kayıt Butonları & Kutuları
   document.getElementById("btnSaveMetrics")?.addEventListener("click", handleSaveMetrics);
   document.getElementById("checkWorkout")?.addEventListener("change", handleHabitToggle);
   document.getElementById("checkDiet")?.addEventListener("change", handleHabitToggle);
 
-  // Antrenman Sekmesi
   document.getElementById("routineSelect")?.addEventListener("change", refreshWorkoutTab);
   document.getElementById("btnSaveWorkout")?.addEventListener("click", handleSaveWorkout);
 
-  // Beslenme Sekmesi
   document.getElementById("btnWaterMinus")?.addEventListener("click", () => handleWaterChange(-1));
   document.getElementById("btnWaterPlus")?.addEventListener("click", () => handleWaterChange(1));
   document.getElementById("btnSaveDiet")?.addEventListener("click", handleSaveDietNotes);
 
-  // Başlangıç Kontrolü
   const cfg = getGithubConfig();
   if (!cfg) {
     document.getElementById("githubConfigModal").classList.remove("hidden");
@@ -520,7 +536,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       checkExistingSession();
     } catch (err) {
       hideSync();
-      console.warn("Otomatik bağlantı başarısız, ayarlar açılıyor:", err);
+      console.warn("Otomatik bağlantı kurulamadı, ayarlar açılıyor:", err);
       openGithubSettings();
     }
   }
