@@ -57,26 +57,25 @@ body {
 }
 
 /* Profil Bazlı Dinamik Tema Seçicileri */
-[data-user-theme="samet"] .theme-dynamic-accent {
+[data-user-theme="blue"], [data-user-theme="samet"] .theme-dynamic-accent {
   color: #38bdf8;
 }
-[data-user-theme="samet"] .theme-dynamic-border {
+[data-user-theme="blue"], [data-user-theme="samet"] .theme-dynamic-border {
   border-color: rgba(56, 189, 248, 0.4);
 }
-[data-user-theme="samet"] .theme-dynamic-bg {
+[data-user-theme="blue"], [data-user-theme="samet"] .theme-dynamic-bg {
   background-color: #0284c7;
 }
 
-[data-user-theme="gulbilge"] .theme-dynamic-accent {
+[data-user-theme="pink"], [data-user-theme="gulbilge"] .theme-dynamic-accent {
   color: #f43f5e;
 }
-[data-user-theme="gulbilge"] .theme-dynamic-border {
+[data-user-theme="pink"], [data-user-theme="gulbilge"] .theme-dynamic-border {
   border-color: rgba(244, 63, 94, 0.4);
 }
-[data-user-theme="gulbilge"] .theme-dynamic-bg {
+[data-user-theme="pink"], [data-user-theme="gulbilge"] .theme-dynamic-bg {
   background: linear-gradient(135deg, #f43f5e 0%, #d946ef 100%);
 }
-
 /* Sayı Girdilerindeki Yukarı/Aşağı Oklarını Gizleme (Temiz Arayüz İçin) */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
