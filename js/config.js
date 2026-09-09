@@ -21,7 +21,7 @@ export const XIAOMI_METRICS = {
   visceralFat: { label: "İç Yağlanma", unit: "Lv", step: "1", placeholder: "örn: 7", required: false }
 };
 
-// Kalistenik Antrenman Rutinleri (Progressive Overload Set Sayılarıyla)
+// Kalistenik Antrenman Rutinleri
 export const ROUTINES = {
   A: {
     title: "Gün A: İtiş & Karın",
@@ -57,11 +57,11 @@ export const ROUTINES = {
   }
 };
 
-// Duo Dark Tema Renk Profilleri
+// Duo Dark Tema Renk Profilleri (Kullanıcı Tercihine Göre)
 export const USER_THEMES = {
-  samet: {
-    id: "samet",
-    name: "Mavi",
+  blue: {
+    id: "blue",
+    name: "Okyanus Mavisi",
     accent: "text-sky-400",
     bgAccent: "bg-sky-500",
     borderAccent: "border-sky-500/40",
@@ -69,9 +69,9 @@ export const USER_THEMES = {
     chartColor: "#38bdf8",
     chartBg: "rgba(56, 189, 248, 0.12)"
   },
-  gulbilge: {
-    id: "gulbilge",
-    name: "Pembe/Mor",
+  pink: {
+    id: "pink",
+    name: "Neon Gül / Fuşya",
     accent: "text-rose-400",
     bgAccent: "bg-gradient-to-r from-rose-500 to-fuchsia-500",
     borderAccent: "border-rose-500/40",
