@@ -25,7 +25,7 @@
     "samet": {
       "settings": {
         "startWeight": null,
-        "partner": null,
+        "partner": "gulbis",
         "duoCode": "DUO-SAM-4726",
         "theme": "pink"
       },
@@ -61,7 +61,7 @@
     "gulbis": {
       "settings": {
         "startWeight": null,
-        "partner": null,
+        "partner": "samet",
         "duoCode": "DUO-GUL-9208",
         "theme": "blue"
       },
