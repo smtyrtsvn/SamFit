@@ -84,7 +84,23 @@
             "waterPct": null,
             "visceralFat": null
           },
-          "habits": {}
+          "habits": {
+            "workoutCompleted": true
+          },
+          "workoutDetails": {
+            "routine": "EMERGENCY",
+            "completedAt": "2026-09-09T20:08:45.905Z",
+            "totalVolumeReps": 1,
+            "exercises": [
+              {
+                "id": "emergency_circuit",
+                "name": "20 Şınav + 20 Squat + 1 dk Plank",
+                "sets": [
+                  1
+                ]
+              }
+            ]
+          }
         }
       }
     }
