@@ -1,23 +1,20 @@
 /**
- * FitChain - GitHub API & Çakışma Önleyici Veri Motoru
+ * FitChain - GitHub API, Çakışma Önleme & Dinamik Duo Eşleştirme Motoru
  */
 
 import { CONFIG } from "./config.js";
 
-// GitHub Ayarlarını Yerel Hafızadan Getir
 export function getGithubConfig() {
   const cfg = localStorage.getItem(CONFIG.STORAGE_KEYS.GITHUB_CONFIG);
   return cfg ? JSON.parse(cfg) : null;
 }
 
-// GitHub Ayarlarını Kaydet
 export function setGithubConfig(owner, repo, token) {
   const cfg = { owner: owner.trim(), repo: repo.trim(), token: token.trim() };
   localStorage.setItem(CONFIG.STORAGE_KEYS.GITHUB_CONFIG, JSON.stringify(cfg));
   return cfg;
 }
 
-// UTF-8 Uyumlu Base64 Dönüşümleri
 function toBase64(str) {
   return btoa(unescape(encodeURIComponent(str)));
 }
@@ -26,9 +23,12 @@ function fromBase64(str) {
   return decodeURIComponent(escape(atob(str)));
 }
 
-/**
- * GitHub API'den Veritabanını En Güncel SHA ile Çeker
- */
+export function generateDuoCode(username) {
+  const prefix = (username || "USR").slice(0, 3).toUpperCase();
+  const randNum = Math.floor(1000 + Math.random() * 9000);
+  return `DUO-${prefix}-${randNum}`;
+}
+
 export async function fetchRemoteDatabase() {
   const cfg = getGithubConfig();
   if (!cfg) throw new Error("GitHub bağlantı ayarları bulunamadı.");
@@ -44,11 +44,7 @@ export async function fetchRemoteDatabase() {
   });
 
   if (res.status === 404) {
-    // Repo içinde dosya henüz yoksa başlangıç şablonunu oluştur
-    return {
-      db: { accounts: {}, userData: {} },
-      sha: null
-    };
+    return { db: { accounts: {}, userData: {} }, sha: null };
   }
 
   if (!res.ok) {
@@ -61,9 +57,6 @@ export async function fetchRemoteDatabase() {
   return { db, sha: payload.sha };
 }
 
-/**
- * GitHub'a Yeni Commit Gönderir (SHA Eşleşmesi ile)
- */
 async function pushCommit(contentString, commitMessage, sha = null) {
   const cfg = getGithubConfig();
   const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${CONFIG.DB_FILE_PATH}`;
@@ -99,32 +92,19 @@ async function pushCommit(contentString, commitMessage, sha = null) {
   return data.content.sha;
 }
 
-/**
- * Çakışma Önleyici Güvenli Kayıt (Optimistic Concurrency Control)
- * 1. En son veritabanını ve SHA'yı çeker.
- * 2. Yalnızca hedeflenen kullanıcının verisini günceller (diğer kullanıcının verisine dokunmaz).
- * 3. Çakışma (409 Conflict) olursa otomatik olarak 3 kez baştan dener.
- */
 export async function safeUpdateDatabase(mutatorFn, commitMessage = "Update FitChain data", maxRetries = 3) {
   let attempt = 0;
 
   while (attempt < maxRetries) {
     attempt++;
     try {
-      // 1. En güncel veriyi GitHub'dan çek
       const { db, sha } = await fetchRemoteDatabase();
-
-      // 2. Veri üzerinde kullanıcı işlemini yap
       const updatedDb = mutatorFn(db);
-
-      // 3. Yeni halini commit et
       const jsonStr = JSON.stringify(updatedDb, null, 2);
       const newSha = await pushCommit(jsonStr, commitMessage, sha);
-      
       return { success: true, newSha, db: updatedDb };
     } catch (err) {
       if (err.status === 409 && attempt < maxRetries) {
-        // Çakışma algılandı: 800ms bekle ve tekrar dene
         await new Promise((r) => setTimeout(r, 800 * attempt));
         continue;
       }
@@ -135,9 +115,6 @@ export async function safeUpdateDatabase(mutatorFn, commitMessage = "Update FitC
   throw new Error("Veri çakışması 3 denemeden sonra çözülemedi. Lütfen tekrar deneyin.");
 }
 
-/**
- * Aktif Kullanıcının Günlük Verisini Güvenle Kaydeder
- */
 export async function saveUserDailyLog(username, dateStr, dayPatch) {
   const normalizedUser = username.toLowerCase().trim();
   const commitMsg = `Log data for ${normalizedUser} on ${dateStr}`;
@@ -145,7 +122,10 @@ export async function saveUserDailyLog(username, dateStr, dayPatch) {
   return await safeUpdateDatabase((db) => {
     if (!db.userData) db.userData = {};
     if (!db.userData[normalizedUser]) {
-      db.userData[normalizedUser] = { settings: { startWeight: null }, logs: {} };
+      db.userData[normalizedUser] = {
+        settings: { startWeight: null, partner: null, duoCode: generateDuoCode(normalizedUser), theme: "blue" },
+        logs: {}
+      };
     }
     if (!db.userData[normalizedUser].logs) {
       db.userData[normalizedUser].logs = {};
@@ -153,7 +133,6 @@ export async function saveUserDailyLog(username, dateStr, dayPatch) {
 
     const currentLog = db.userData[normalizedUser].logs[dateStr] || {};
 
-    // Eski veriyi koru, gelen yamayı (patch) üzerine ekle
     db.userData[normalizedUser].logs[dateStr] = {
       ...currentLog,
       ...dayPatch,
@@ -167,7 +146,6 @@ export async function saveUserDailyLog(username, dateStr, dayPatch) {
       }
     };
 
-    // İlk kilo girildiyse başlangıç kilosu olarak işaretle
     if (dayPatch.metrics?.weight && !db.userData[normalizedUser].settings?.startWeight) {
       db.userData[normalizedUser].settings.startWeight = dayPatch.metrics.weight;
     }
@@ -176,10 +154,7 @@ export async function saveUserDailyLog(username, dateStr, dayPatch) {
   }, commitMsg);
 }
 
-/**
- * Yeni Kullanıcıyı Diğer Kullanıcıları Silmeden Güvenle Ekler
- */
-export async function registerNewUser(username, passwordHash) {
+export async function registerNewUser(username, passwordHash, chosenTheme = "blue") {
   const normalizedUser = username.toLowerCase().trim();
 
   return await safeUpdateDatabase((db) => {
@@ -197,11 +172,75 @@ export async function registerNewUser(username, passwordHash) {
 
     if (!db.userData[normalizedUser]) {
       db.userData[normalizedUser] = {
-        settings: { startWeight: null },
+        settings: {
+          startWeight: null,
+          partner: null,
+          duoCode: generateDuoCode(normalizedUser),
+          theme: chosenTheme
+        },
         logs: {}
       };
     }
 
     return db;
   }, `Register new user: ${normalizedUser}`);
+}
+
+/**
+ * Duo Kodu Kullanarak İki Kullanıcıyı Karşılıklı Eşleştirir
+ */
+export async function pairUsersByCode(activeUsername, targetCode) {
+  const normalizedActive = activeUsername.toLowerCase().trim();
+  const codeToFind = targetCode.trim().toUpperCase();
+
+  return await safeUpdateDatabase((db) => {
+    if (!db.userData) throw new Error("Veritabanı bulunamadı.");
+
+    // Kodu eşleşen partneri bul
+    let matchedPartner = null;
+    for (const [uname, udata] of Object.entries(db.userData)) {
+      if (udata.settings?.duoCode?.toUpperCase() === codeToFind) {
+        matchedPartner = uname;
+        break;
+      }
+    }
+
+    if (!matchedPartner) {
+      throw new Error("Geçersiz Duo Kodu! Böyle bir koda sahip kullanıcı bulunamadı.");
+    }
+
+    if (matchedPartner === normalizedActive) {
+      throw new Error("Kendi Duo Kodunuz ile eşleşemezsiniz!");
+    }
+
+    // Karşılıklı partner eşleştirmesi yap
+    if (!db.userData[normalizedActive].settings) db.userData[normalizedActive].settings = {};
+    if (!db.userData[matchedPartner].settings) db.userData[matchedPartner].settings = {};
+
+    db.userData[normalizedActive].settings.partner = matchedPartner;
+    db.userData[matchedPartner].settings.partner = normalizedActive;
+
+    return db;
+  }, `Pair users: ${normalizedActive} <-> Duo Partner`);
+}
+
+/**
+ * İki Kullanıcının Duo Eşleşmesini Karşılıklı Sonlandırır
+ */
+export async function unpairUsers(activeUsername) {
+  const normalizedActive = activeUsername.toLowerCase().trim();
+
+  return await safeUpdateDatabase((db) => {
+    const currentPartner = db.userData?.[normalizedActive]?.settings?.partner;
+
+    if (db.userData?.[normalizedActive]?.settings) {
+      db.userData[normalizedActive].settings.partner = null;
+    }
+
+    if (currentPartner && db.userData?.[currentPartner]?.settings) {
+      db.userData[currentPartner].settings.partner = null;
+    }
+
+    return db;
+  }, `Unpair user: ${normalizedActive}`);
 }
