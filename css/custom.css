@@ -1,0 +1,93 @@
+/* ==========================================================================
+   FitChain - Duo Dark Theme & Custom Interactions
+   ========================================================================== */
+
+/* Genel Sayfa Ayarları & Yumuşak Kaydırma */
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #0b0f19;
+  color: #f1f5f9;
+}
+
+/* Özel Kaydırma Çubuğu (Scrollbar) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Cam Efekti Kartlar (Glassmorphism) */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+}
+
+.glass-panel-subtle {
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(51, 65, 85, 0.4);
+}
+
+/* Neon Alev ve Vurgu Parıltıları */
+.glow-cyan {
+  box-shadow: 0 0 20px -5px rgba(56, 189, 248, 0.35);
+}
+
+.glow-rose {
+  box-shadow: 0 0 20px -5px rgba(244, 63, 94, 0.35);
+}
+
+.glow-duo {
+  box-shadow: 0 0 25px -5px rgba(217, 70, 239, 0.3);
+}
+
+/* Profil Bazlı Dinamik Tema Seçicileri */
+[data-user-theme="samet"] .theme-dynamic-accent {
+  color: #38bdf8;
+}
+[data-user-theme="samet"] .theme-dynamic-border {
+  border-color: rgba(56, 189, 248, 0.4);
+}
+[data-user-theme="samet"] .theme-dynamic-bg {
+  background-color: #0284c7;
+}
+
+[data-user-theme="gulbilge"] .theme-dynamic-accent {
+  color: #f43f5e;
+}
+[data-user-theme="gulbilge"] .theme-dynamic-border {
+  border-color: rgba(244, 63, 94, 0.4);
+}
+[data-user-theme="gulbilge"] .theme-dynamic-bg {
+  background: linear-gradient(135deg, #f43f5e 0%, #d946ef 100%);
+}
+
+/* Sayı Girdilerindeki Yukarı/Aşağı Oklarını Gizleme (Temiz Arayüz İçin) */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Buton Basma Hissi */
+button:active {
+  transform: scale(0.98);
+}
