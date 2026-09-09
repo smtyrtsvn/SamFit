@@ -10,7 +10,14 @@
       "settings": {
         "startWeight": null
       },
-      "logs": {}
+      "logs": {
+        "2026-09-09": {
+          "habits": {
+            "waterGlasses": 1
+          },
+          "metrics": {}
+        }
+      }
     }
   }
 }
