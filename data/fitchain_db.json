@@ -3,6 +3,10 @@
     "samet": {
       "passwordHash": "d2fe8a3727b921bcd702c42ffec15a6ff4c3aeb749c2c8733847e55632a9c4a9",
       "createdAt": "2026-09-09T20:15:38.289Z"
+    },
+    "samdi": {
+      "passwordHash": "ed0e492d100f92d4457a8184e3758ae2dc567bac0fac34a50591b425630e9063",
+      "createdAt": "2026-09-09T20:16:59.985Z"
     }
   },
   "userData": {
@@ -11,6 +15,15 @@
         "startWeight": null,
         "partner": null,
         "duoCode": "DUO-SAM-4726",
+        "theme": "pink"
+      },
+      "logs": {}
+    },
+    "samdi": {
+      "settings": {
+        "startWeight": null,
+        "partner": null,
+        "duoCode": "DUO-SAM-6572",
         "theme": "pink"
       },
       "logs": {}
