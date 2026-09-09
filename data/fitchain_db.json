@@ -15,6 +15,10 @@
     "samdi111": {
       "passwordHash": "96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e",
       "createdAt": "2026-09-09T20:24:08.360Z"
+    },
+    "gulbis": {
+      "passwordHash": "1da3048d9375a8c8c58d78da7d13d488ffa56bf89065164ce9fcbee05507fe2e",
+      "createdAt": "2026-09-09T20:25:56.075Z"
     }
   },
   "userData": {
@@ -51,6 +55,15 @@
         "partner": null,
         "duoCode": "DUO-SAM-8938",
         "theme": "pink"
+      },
+      "logs": {}
+    },
+    "gulbis": {
+      "settings": {
+        "startWeight": null,
+        "partner": null,
+        "duoCode": "DUO-GUL-9208",
+        "theme": "blue"
       },
       "logs": {}
     }
