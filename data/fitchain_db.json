@@ -14,7 +14,7 @@
         "2026-09-09": {
           "habits": {
             "waterGlasses": 1,
-            "workoutCompleted": false,
+            "workoutCompleted": true,
             "dietCompleted": true
           },
           "metrics": {}
