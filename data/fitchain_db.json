@@ -11,6 +11,10 @@
     "admin": {
       "passwordHash": "12be951c9c3b0c3a5b0dcea2877d05bb33b74941b4cae047e588ab6cf76b5de9",
       "createdAt": "2026-09-09T19:36:09.229Z"
+    },
+    "samdi": {
+      "passwordHash": "d2fe8a3727b921bcd702c42ffec15a6ff4c3aeb749c2c8733847e55632a9c4a9",
+      "createdAt": "2026-09-09T19:38:10.381Z"
     }
   },
   "userData": {
@@ -55,6 +59,12 @@
           "notes": ""
         }
       }
+    },
+    "samdi": {
+      "settings": {
+        "startWeight": null
+      },
+      "logs": {}
     }
   }
 }
