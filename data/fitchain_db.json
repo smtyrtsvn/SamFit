@@ -62,9 +62,13 @@
     },
     "samdi": {
       "settings": {
-        "startWeight": null
+        "startWeight": 72
       },
-      "logs": {}
+      "logs": {
+        "2026-09-09": {
+          "weight": 72
+        }
+      }
     }
   }
 }
