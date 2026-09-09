@@ -46,7 +46,12 @@
       "settings": {
         "startWeight": null
       },
-      "logs": {}
+      "logs": {
+        "2026-09-09": {
+          "workout": true,
+          "diet": true
+        }
+      }
     }
   }
 }
