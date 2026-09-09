@@ -1,0 +1,20 @@
+{
+  "accounts": {
+    "samet": { "passwordHash": "a665a45...", "createdAt": "2026-09-09" },
+    "gulbilge": { "passwordHash": "b231c12...", "createdAt": "2026-09-09" }
+  },
+  "userData": {
+    "samet": {
+      "settings": { "startWeight": 82.5 },
+      "logs": {
+        "2026-09-09": { "weight": 82.0, "workout": true, "diet": true, "water": 8, "notes": "İtiş tamam" }
+      }
+    },
+    "gulbilge": {
+      "settings": { "startWeight": 58.0 },
+      "logs": {
+        "2026-09-09": { "weight": 57.8, "workout": true, "diet": true, "water": 9, "notes": "Bacak tamam" }
+      }
+    }
+  }
+}
