@@ -1,20 +1,52 @@
 {
   "accounts": {
-    "samet": { "passwordHash": "a665a45...", "createdAt": "2026-09-09" },
-    "gulbilge": { "passwordHash": "b231c12...", "createdAt": "2026-09-09" }
+    "samet": {
+      "passwordHash": "a665a45...",
+      "createdAt": "2026-09-09"
+    },
+    "gulbilge": {
+      "passwordHash": "b231c12...",
+      "createdAt": "2026-09-09"
+    },
+    "admin": {
+      "passwordHash": "12be951c9c3b0c3a5b0dcea2877d05bb33b74941b4cae047e588ab6cf76b5de9",
+      "createdAt": "2026-09-09T19:36:09.229Z"
+    }
   },
   "userData": {
     "samet": {
-      "settings": { "startWeight": 82.5 },
+      "settings": {
+        "startWeight": 82.5
+      },
       "logs": {
-        "2026-09-09": { "weight": 82.0, "workout": true, "diet": true, "water": 8, "notes": "İtiş tamam" }
+        "2026-09-09": {
+          "weight": 82,
+          "workout": true,
+          "diet": true,
+          "water": 8,
+          "notes": "İtiş tamam"
+        }
       }
     },
     "gulbilge": {
-      "settings": { "startWeight": 58.0 },
+      "settings": {
+        "startWeight": 58
+      },
       "logs": {
-        "2026-09-09": { "weight": 57.8, "workout": true, "diet": true, "water": 9, "notes": "Bacak tamam" }
+        "2026-09-09": {
+          "weight": 57.8,
+          "workout": true,
+          "diet": true,
+          "water": 9,
+          "notes": "Bacak tamam"
+        }
       }
+    },
+    "admin": {
+      "settings": {
+        "startWeight": null
+      },
+      "logs": {}
     }
   }
 }
