@@ -66,7 +66,9 @@
       },
       "logs": {
         "2026-09-09": {
-          "weight": 72
+          "weight": 72,
+          "workout": true,
+          "diet": false
         }
       }
     }
