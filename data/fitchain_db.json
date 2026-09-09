@@ -51,7 +51,8 @@
           "workout": true,
           "diet": true,
           "weight": 69,
-          "water": 1
+          "water": 7,
+          "notes": ""
         }
       }
     }
