@@ -50,7 +50,8 @@
         "2026-09-09": {
           "workout": true,
           "diet": true,
-          "weight": 69
+          "weight": 69,
+          "water": 1
         }
       }
     }
