@@ -44,7 +44,28 @@
       "settings": {
         "startWeight": null
       },
-      "logs": {}
+      "logs": {
+        "2026-09-09": {
+          "workoutDetails": {
+            "routine": "EMERGENCY",
+            "completedAt": "2026-09-09T20:08:05.892Z",
+            "totalVolumeReps": 1,
+            "exercises": [
+              {
+                "id": "emergency_circuit",
+                "name": "20 Şınav + 20 Squat + 1 dk Plank",
+                "sets": [
+                  1
+                ]
+              }
+            ]
+          },
+          "habits": {
+            "workoutCompleted": true
+          },
+          "metrics": {}
+        }
+      }
     }
   }
 }
